@@ -63,20 +63,99 @@ platforms:
       name: "华尔街见闻"
     - id: "thepaper"
       name: "澎湃新闻"
+    - id: "ifeng"
+      name: "凤凰网"
+    - id: "cankaoxiaoxi"
+      name: "参考消息"
+    - id: "sputniknewscn"
+      name: "卫星通讯社"
+    - id: "zaobao"
+      name: "联合早报"
+    - id: "kaopu"
+      name: "靠谱新闻"
     - id: "bilibili-hot-search"
       name: "bilibili 热搜"
+    - id: "tencent-hot"
+      name: "腾讯新闻"
+
+    # === 财经投资类 ===
+    - id: "wallstreetcn-hot"
+      name: "华尔街见闻 最热"
+    - id: "wallstreetcn-quick"
+      name: "华尔街见闻 快讯"
+    - id: "wallstreetcn-news"
+      name: "华尔街见闻 最新"
     - id: "cls-hot"
       name: "财联社热门"
     - id: "ifeng"
       name: "凤凰网"
     - id: "tieba"
       name: "贴吧"
+    - id: "gelonghui"
+      name: "格隆汇"
+    - id: "xueqiu"
+      name: "雪球"
+    - id: "jin10"
+      name: "金十数据"
+    - id: "fastbull"
+      name: "快讯通"
+    - id: "36kr"
+      name: "36氪"
+
+    # === 社交/短视频/娱乐类 ===
     - id: "weibo"
       name: "微博"
     - id: "douyin"
       name: "抖音"
+    - id: "bilibili-hot-search"
+      name: "bilibili 热搜"
+    - id: "tieba"
+      name: "贴吧"
     - id: "zhihu"
       name: "知乎"
+    - id: "hupu"
+      name: "虎扑"
+
+    # === 科技类平台 ===
+    - id: "ithome"
+      name: "IT之家"
+    - id: "juejin"
+      name: "掘金"
+    - id: "github"
+      name: "GitHub"
+    - id: "hackernews"
+      name: "Hacker News"
+    - id: "solidot"
+      name: "Solidot"
+    - id: "v2ex"
+      name: "V2EX"
+    - id: "nowcoder"
+      name: "牛客网"
+    - id: "pcbeta"
+      name: "远景论坛"
+    - id: "sspai"
+      name: "少数派"
+    - id: "producthunt"
+      name: "ProductHunt"
+
+    # === 其他/工具类 ===
+    - id: "chongbuluo"
+      name: "虫部落"
+
+    - id: "tencent-hot"
+      name: "腾讯新闻 综合早报"
+
+    - id: "cls-telegraph"
+      name: "财联社 电报"
+
+    - id: "cls-depth"
+      name: "财联社 深度"
+
+    - id: "fastbull-express"
+      name: "法布财经 快讯"
+
+    - id: "fastbull-news"
+      name: "法布财经 头条"
 
 
 
@@ -367,13 +446,13 @@ storage:
   # 数据格式选项
   formats:
     sqlite: true                      # 主存储（必须启用）
-    txt: false                        # 是否生成 TXT 快照
+    txt: true                        # 是否生成 TXT 快照
     html: true                       # 是否生成 HTML 报告（⚠️ 邮件推送或者需要看网页版报告必须设为 true）
 
   # 本地存储配置
   local:
     data_dir: "output"                # 数据目录
-    retention_days: 0                 # 保留天数（0=永久保留）
+    retention_days: 7                 # 保留天数（0=永久保留）
 
   # 远程存储配置（S3 兼容协议）
   # 支持: Cloudflare R2, 阿里云 OSS, 腾讯云 COS, AWS S3, MinIO 等
