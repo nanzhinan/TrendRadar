@@ -795,6 +795,71 @@ def render_html_content(
                 font-size: 18px;
                 font-weight: 600;
                 color: #059669;
+                display: flex;
+                align-items: center;
+            }
+
+            .standalone-copy-btn {
+                cursor: pointer;
+                color: #9ca3af;
+                transition: color 0.15s;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                margin-right: 6px;
+                background: #f3f4f6;
+            }
+
+            .standalone-copy-btn:hover {
+                color: #4f46e5;
+            }
+
+            .standalone-copy-btn.copied {
+                color: #22c55e !important;
+            }
+
+            body.dark-mode .standalone-copy-btn:hover {
+                color: #8ab4f8;
+                background: #374151;
+            }
+
+            body.dark-mode .standalone-copy-btn.copied {
+                color: #22c55e !important;
+            }
+
+            .group-copy-btn {
+                cursor: pointer;
+                color: #9ca3af;
+                transition: color 0.15s;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+                margin-right: 4px;
+                background: #f3f4f6;
+                vertical-align: middle;
+            }
+
+            .group-copy-btn:hover {
+                color: #4f46e5;
+            }
+
+            .group-copy-btn.copied {
+                color: #22c55e !important;
+            }
+
+            body.dark-mode .group-copy-btn:hover {
+                color: #8ab4f8;
+                background: #374151;
+            }
+
+            body.dark-mode .group-copy-btn.copied {
+                color: #22c55e !important;
             }
 
             .standalone-section-count {
@@ -1727,7 +1792,10 @@ def render_html_content(
         standalone_html = f"""
                 <div class="standalone-section">
                     <div class="standalone-section-header">
-                        <div class="standalone-section-title">独立展示区</div>
+                        <div class="standalone-section-title">
+                            <span class="standalone-copy-btn" title="复制全部"></span>
+                            独立展示区
+                        </div>
                         <div class="standalone-section-count">{total_count} 条</div>
                     </div>"""
 
@@ -1757,7 +1825,10 @@ def render_html_content(
             standalone_html += f"""
                     <div class="standalone-group" data-standalone-tab="{group_idx}">
                         <div class="standalone-header">
-                            <div class="standalone-name">{html_escape(platform_name)}</div>
+                            <div class="standalone-name">
+                                <span class="group-copy-btn" title="复制该分组"></span>
+                                {html_escape(platform_name)}
+                            </div>
                             <div class="standalone-count">{len(items)} 条</div>
                         </div>"""
 
@@ -1849,7 +1920,10 @@ def render_html_content(
             standalone_html += f"""
                     <div class="standalone-group" data-standalone-tab="{group_idx}">
                         <div class="standalone-header">
-                            <div class="standalone-name">{html_escape(feed_name)}</div>
+                            <div class="standalone-name">
+                                <span class="group-copy-btn" title="复制该分组"></span>
+                                {html_escape(feed_name)}
+                            </div>
                             <div class="standalone-count">{len(items)} 条</div>
                         </div>"""
 
@@ -2673,6 +2747,98 @@ def render_html_content(
                             setTimeout(function() {
                                 btn.classList.remove('copied');
                                 btn.innerHTML = wordCopySvg;
+                            }, 1500);
+                        }).catch(function(err) {
+                            console.error('复制失败:', err);
+                        });
+                    });
+                });
+
+                // 独立展示区分组复制按钮：复制该分组下所有内容
+                var groupCopySvg = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M5 11H3.5A1.5 1.5 0 012 9.5v-7A1.5 1.5 0 013.5 1h7A1.5 1.5 0 0112 2.5V5"/></svg>';
+                var groupCheckSvg = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="2"><path d="M3 8.5l3.5 3.5 7-7"/></svg>';
+                document.querySelectorAll('.group-copy-btn').forEach(function(btn) {
+                    btn.innerHTML = groupCopySvg;
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var standaloneGroup = btn.closest('.standalone-group');
+                        if (!standaloneGroup) return;
+
+                        var lines = [];
+                        var groupHeader = standaloneGroup.querySelector('.standalone-name');
+                        if (groupHeader) {
+                            var groupName = groupHeader.textContent.trim();
+                            lines.push('【' + groupName + '】');
+                        }
+
+                        var newsItems = standaloneGroup.querySelectorAll('.news-item');
+                        newsItems.forEach(function(item, idx) {
+                            var titleEl = item.querySelector('.news-title a');
+                            if (titleEl) {
+                                var num = item.querySelector('.news-number');
+                                var numText = num && num.querySelector('.num-text') ? num.querySelector('.num-text').textContent.trim() : (idx + 1);
+                                lines.push(numText + '. ' + titleEl.textContent.trim());
+                            }
+                        });
+
+                        var text = lines.join(String.fromCharCode(10));
+                        navigator.clipboard.writeText(text).then(function() {
+                            btn.classList.add('copied');
+                            btn.innerHTML = groupCheckSvg;
+                            setTimeout(function() {
+                                btn.classList.remove('copied');
+                                btn.innerHTML = groupCopySvg;
+                            }, 1500);
+                        }).catch(function(err) {
+                            console.error('复制失败:', err);
+                        });
+                    });
+                });
+
+                // 独立展示区复制按钮：复制当前显示的所有内容
+                var standaloneCopySvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M5 11H3.5A1.5 1.5 0 012 9.5v-7A1.5 1.5 0 013.5 1h7A1.5 1.5 0 0112 2.5V5"/></svg>';
+                var standaloneCheckSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="2"><path d="M3 8.5l3.5 3.5 7-7"/></svg>';
+                document.querySelectorAll('.standalone-copy-btn').forEach(function(btn) {
+                    btn.innerHTML = standaloneCopySvg;
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var standaloneSection = btn.closest('.standalone-section');
+                        if (!standaloneSection) return;
+
+                        var lines = [];
+                        var activeTab = document.querySelector('.standalone-tab-bar .tab-btn.active');
+                        var activeTabIndex = activeTab ? activeTab.getAttribute('data-standalone-tab') : '0';
+
+                        var visibleGroups = standaloneSection.querySelectorAll('.standalone-group');
+                        visibleGroups.forEach(function(group) {
+                            var groupTab = group.getAttribute('data-standalone-tab');
+                            if (activeTabIndex !== 'all' && groupTab !== activeTabIndex && activeTabIndex !== null) {
+                                return;
+                            }
+
+                            var groupHeader = group.querySelector('.standalone-name');
+                            if (groupHeader) {
+                                lines.push('【' + groupHeader.textContent.trim() + '】');
+                            }
+
+                            var newsItems = group.querySelectorAll('.news-item');
+                            newsItems.forEach(function(item, idx) {
+                                var titleEl = item.querySelector('.news-title a');
+                                if (titleEl) {
+                                    var num = item.querySelector('.news-number');
+                                    var numText = num ? num.querySelector('.num-text').textContent.trim() : (idx + 1);
+                                    lines.push(numText + '. ' + titleEl.textContent.trim());
+                                }
+                            });
+                        });
+
+                        var text = lines.join(String.fromCharCode(10));
+                        navigator.clipboard.writeText(text).then(function() {
+                            btn.classList.add('copied');
+                            btn.innerHTML = standaloneCheckSvg;
+                            setTimeout(function() {
+                                btn.classList.remove('copied');
+                                btn.innerHTML = standaloneCopySvg;
                             }, 1500);
                         }).catch(function(err) {
                             console.error('复制失败:', err);
