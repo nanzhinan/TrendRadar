@@ -2662,7 +2662,7 @@ def render_html_content(
                             if (titleEl) {
                                 var num = item.querySelector('.news-number');
                                 var numText = num ? num.textContent.trim() : (idx + 1);
-                                lines.push(numText + '. ' + titleEl.textContent.trim() + ' ' + titleEl.href);
+                                lines.push(numText + '. ' + titleEl.textContent.trim());
                             }
                         });
 
