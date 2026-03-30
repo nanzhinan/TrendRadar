@@ -300,6 +300,40 @@ def render_html_content(
             .word-index {
                 color: #999;
                 font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .word-copy-btn {
+                cursor: pointer;
+                color: #9ca3af;
+                transition: color 0.15s;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                margin-right: 4px;
+                background: #f3f4f6;
+            }
+
+            .word-copy-btn:hover {
+                color: #4f46e5;
+            }
+
+            .word-copy-btn.copied {
+                color: #22c55e !important;
+            }
+
+            body.dark-mode .word-copy-btn:hover {
+                color: #8ab4f8;
+                background: #374151;
+            }
+
+            body.dark-mode .word-copy-btn.copied {
+                color: #22c55e !important;
             }
 
             .news-item {
@@ -1357,6 +1391,7 @@ def render_html_content(
                 <div class="word-group" data-tab-index="{i - 1}">
                     <div class="word-header">
                         <div class="word-info">
+                            <span class="word-copy-btn" title="复制全部"></span>
                             <div class="word-name">{escaped_word}</div>
                             <div class="word-count {count_class}">{count} 条</div>
                         </div>
@@ -2603,6 +2638,44 @@ def render_html_content(
                                 numEl.classList.remove('copied');
                                 numEl.querySelector('.copy-icon').innerHTML = copySvg;
                             }, 1500);
+                        });
+                    });
+                });
+
+                // 大标题复制按钮：复制该大标题下所有小标题和内容
+                var wordCopySvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M5 11H3.5A1.5 1.5 0 012 9.5v-7A1.5 1.5 0 013.5 1h7A1.5 1.5 0 0112 2.5V5"/></svg>';
+                var wordCheckSvg = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="2"><path d="M3 8.5l3.5 3.5 7-7"/></svg>';
+                document.querySelectorAll('.word-copy-btn').forEach(function(btn) {
+                    btn.innerHTML = wordCopySvg;
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var wordGroup = btn.closest('.word-group');
+                        if (!wordGroup) return;
+
+                        var wordName = wordGroup.querySelector('.word-name');
+                        var wordTitle = wordName ? wordName.textContent.trim() : '';
+
+                        var lines = [wordTitle];
+                        var newsItems = wordGroup.querySelectorAll('.news-item');
+                        newsItems.forEach(function(item, idx) {
+                            var titleEl = item.querySelector('.news-title a');
+                            if (titleEl) {
+                                var num = item.querySelector('.news-number');
+                                var numText = num ? num.textContent.trim() : (idx + 1);
+                                lines.push(numText + '. ' + titleEl.textContent.trim() + ' ' + titleEl.href);
+                            }
+                        });
+
+                        var text = lines.join(String.fromCharCode(10));
+                        navigator.clipboard.writeText(text).then(function() {
+                            btn.classList.add('copied');
+                            btn.innerHTML = wordCheckSvg;
+                            setTimeout(function() {
+                                btn.classList.remove('copied');
+                                btn.innerHTML = wordCopySvg;
+                            }, 1500);
+                        }).catch(function(err) {
+                            console.error('复制失败:', err);
                         });
                     });
                 });
