@@ -113,8 +113,8 @@ platforms:
       name: "掘金"
     - id: "github"
       name: "GitHub"
-    - id: "hackernews"
-      name: "Hacker News"
+    # - id: "hackernews"
+    #   name: "Hacker News"
     - id: "nowcoder"
       name: "牛客网"
     - id: "pcbeta"
@@ -135,8 +135,8 @@ platforms:
     - id: "fastbull-express"
       name: "法布财经 快讯"
 
-    - id: "fastbull-news"
-      name: "法布财经 头条"
+    # - id: "fastbull-news"
+    #   name: "法布财经 头条"
 
 
 

@@ -2695,6 +2695,43 @@ def render_html_content(
                 // 一键复制：hover 时数字变复制图标
                 var copySvg = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M5 11H3.5A1.5 1.5 0 012 9.5v-7A1.5 1.5 0 013.5 1h7A1.5 1.5 0 0112 2.5V5"/></svg>';
                 var checkSvg = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#22c55e" stroke-width="2"><path d="M3 8.5l3.5 3.5 7-7"/></svg>';
+
+                // 通用复制函数（兼容 HTTP/HTTPS/所有浏览器）
+                function copyText(text, successCallback) {
+                    // 方法1：优先使用 Clipboard API（现代浏览器）
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(function() {
+                            if (successCallback) successCallback();
+                        }).catch(function() {
+                            fallbackCopy(text, successCallback);
+                        });
+                    } else {
+                        // 方法2：使用备用方案（兼容旧浏览器和 HTTP）
+                        fallbackCopy(text, successCallback);
+                    }
+                }
+
+                // 备用复制方法（所有浏览器可用）
+                function fallbackCopy(text, successCallback) {
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-9999px";
+                    textArea.style.top = "-9999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        var successful = document.execCommand('copy');
+                        if (successful && successCallback) {
+                            successCallback();
+                        }
+                    } catch (err) {
+                        console.error('复制失败:', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+
                 document.querySelectorAll('.news-item .news-number').forEach(function(numEl) {
                     var item = numEl.closest('.news-item');
                     var titleEl = item ? item.querySelector('.news-title a') : null;
@@ -2705,7 +2742,7 @@ def render_html_content(
                     numEl.addEventListener('click', function(e) {
                         e.stopPropagation();
                         var text = titleEl.textContent.trim() + ' ' + titleEl.href;
-                        navigator.clipboard.writeText(text).then(function() {
+                        copyText(text, function() {
                             numEl.classList.add('copied');
                             numEl.querySelector('.copy-icon').innerHTML = checkSvg;
                             setTimeout(function() {
@@ -2741,15 +2778,13 @@ def render_html_content(
                         });
 
                         var text = lines.join(String.fromCharCode(10));
-                        navigator.clipboard.writeText(text).then(function() {
+                        copyText(text, function() {
                             btn.classList.add('copied');
                             btn.innerHTML = wordCheckSvg;
                             setTimeout(function() {
                                 btn.classList.remove('copied');
                                 btn.innerHTML = wordCopySvg;
                             }, 1500);
-                        }).catch(function(err) {
-                            console.error('复制失败:', err);
                         });
                     });
                 });
@@ -2782,15 +2817,13 @@ def render_html_content(
                         });
 
                         var text = lines.join(String.fromCharCode(10));
-                        navigator.clipboard.writeText(text).then(function() {
+                        copyText(text, function() {
                             btn.classList.add('copied');
                             btn.innerHTML = groupCheckSvg;
                             setTimeout(function() {
                                 btn.classList.remove('copied');
                                 btn.innerHTML = groupCopySvg;
                             }, 1500);
-                        }).catch(function(err) {
-                            console.error('复制失败:', err);
                         });
                     });
                 });
@@ -2833,15 +2866,13 @@ def render_html_content(
                         });
 
                         var text = lines.join(String.fromCharCode(10));
-                        navigator.clipboard.writeText(text).then(function() {
+                        copyText(text, function() {
                             btn.classList.add('copied');
                             btn.innerHTML = standaloneCheckSvg;
                             setTimeout(function() {
                                 btn.classList.remove('copied');
                                 btn.innerHTML = standaloneCopySvg;
                             }, 1500);
-                        }).catch(function(err) {
-                            console.error('复制失败:', err);
                         });
                     });
                 });
