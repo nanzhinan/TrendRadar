@@ -200,7 +200,7 @@ presets:
         end: "23:00"
         # frequency_file: "xxx.txt"               # 关键词文件（可选，位于 config/custom/keyword/）
         # interests_file: "xxx.txt"                # AI 兴趣文件（可选，位于 config/custom/ai/）
-        # filter_method: "keyword"                # 筛选策略（可选: keyword | ai，不填用全局 filter.method）
+        filter_method: "ai"                # 筛选策略（可选: keyword | ai，不填用全局 filter.method）
         analyze: true              # 晚间做 AI 分析
         ai_mode: "daily"           # AI 也汇总全天内容
         report_mode: "daily"       # 切换为当日全部新闻汇总
@@ -211,7 +211,7 @@ presets:
     # 日计划 ── 把时间段组装成一天的安排
     day_plans:
       all_day:
-        periods: ["noon_ai","evening_summary"]
+        periods: ["evening_summary"]
 
     # 周映射 ── 每天用哪个日计划（1=周一 ... 7=周日）
     week_map:
